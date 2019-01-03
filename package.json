@@ -9,7 +9,7 @@
   "scripts": {
     "build": "node bin/spectacle -l test/fixtures/cheese.png test/fixtures/cheese.yml",
     "test": "mocha && node bin/spectacle -l test/fixtures/cheese.png test/fixtures/cheese.yml",
-    "develop": "spectacle -d",
+    "develop": "node bin/spectacle -d",
     "start": "spectacle -s"
   },
   "repository": {
