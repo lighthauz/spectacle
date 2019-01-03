@@ -1,0 +1,986 @@
+swagger: "2.0"
+info:
+  description: >
+    # The Trusona API - create devices, register users, trusonafy them.
+    
+    ## Hmac Configuration
+    
+    1. Compute the body digest
+       - collect request body into a variable
+       - compute md5 hash on the body
+       - get the hex representation of the hash.
+        
+        
+    2. Combine the request data
+       - http method
+       - body digest
+       - content type
+       - date
+       - path
+    
+       ``` 
+        POST
+        f23b480041b22431105ea236c8adc3df
+        application/json
+        Thu, 03 Jan 2019 17:57:07 GMT
+        /api/v2/user_devices
+        ```
+  
+    3. Hmac sha256 on the request data
+    4. Convert the hmac signature to hex
+  
+    5. Convert the hex string to base64
+    
+    `YjFjZDQ0NTQ4NTkzMjM0MGZkMmNkMDMxNzkxNzRhYzUyMDUzYjk2ZTkyNGM5NTczZGE2YWM2ODk4MTcxYzgyNw==`
+  
+    6. Add base 64 value and token as auth header 
+    
+    `Authorization: TRUSONA <token>:<base64 signature>`
+    
+  version: "2.0.0"
+  title: "The Trusona Service"
+  contact:
+    email: "engineering@trusona.com"
+  license:
+    name: "PROPRIETARY"
+host: "api.trusona.net"
+basePath: "/api/v2"
+tags:
+- name: "device"
+  description: "Access to Devices"
+- name: "user_device"
+  description: "Access to User Device Bindings"
+schemes:
+- "https"
+paths:
+  /devices:
+    post:
+      tags:
+      - "device"
+      summary: "Create a new device"
+      description: ""
+      operationId: "createDevice"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "HMAC'd request string"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "X-Device-Sig"
+        description: "Device identifier + nonce signed by the device key pair. The format is: `base64(identifier:nonce).base64(sign(base64(identifier:nonce)))`"
+        type: "string"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "Device object to be registered with Trusona"
+        required: true
+        schema:
+          $ref: "#/definitions/Device"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/DeviceResponse"
+        201:
+          description: "Created"
+          schema:
+            $ref: "#/definitions/DeviceResponse"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden - likely failed authentication"
+          schema:
+           $ref: "#/definitions/Error"
+        422:
+          description: "Unprocessable Entity"
+          schema:
+            $ref: "#/definitions/ErrorWithFields"
+        424:
+          description: "Failed Dependency"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Server Error"
+  /devices/{identifier}:
+    get:
+      summary: "Gets a device by identifier"
+      description: "Returns the device information associated with the provided identifier"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "HMAC authorization using RP's SDK server credentials"
+        type: "string"
+        required: true
+      - in: "path"
+        name: "identifier"
+        description: "The identifier of the device to retrieve"
+        type: "string"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/DeviceResponse"
+        403:
+          description: "Forbidden - failed authentication"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Server Error"
+  /identity_documents:
+    get:
+      tags:
+      - "identity_document"
+      summary: "Get the identity documents for a user"
+      description: "Get the identity documents that have been registered with Trusona for a given user. Trusona does not store any of the personal information of the user, so the returned value is the hash of the scanned document, the type of document, and the verification status"
+      operationId: "findIdentityDocuments"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "HMAC authorization using RP's SDK server credentials"
+        type: "string"
+        required: true
+      - in: "query"
+        name: "user_identifier"
+        description: "The user's identifier to find identity documents for"
+        type: "string"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/IdentityDocument"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden - likely failed authentication"
+          schema:
+           $ref: "#/definitions/Error"
+        500:
+          description: "Server Error"
+    post:
+      tags:
+      - "identity_document"
+      summary: "Register an identity document with Trusona"
+      description: "Registers an identity document. Based on RP configuration the identity document may also get verified. Replaces existing identity document."
+      operationId: "createIdentityDocument"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "HMAC'd request string"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "X-Device-Sig"
+        description: "Device identifier + nonce signed by the device key pair. The format is: `base64(identifier:nonce).base64(sign(base64(identifier:nonce)))`"
+        type: "string"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "Identity document object to be registered with Trusona"
+        required: true
+        schema:
+          $ref: "#/definitions/IdentityDocument"
+      responses:
+        201:
+          description: "Created"
+          schema:
+            $ref: "#/definitions/IdentityDocument"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden - likely failed authentication"
+          schema:
+           $ref: "#/definitions/Error"
+        422:
+          description: "Unprocessable Entity"
+          schema:
+            $ref: "#/definitions/ErrorWithFields"
+        424:
+          description: "Failed Dependency"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Server Error"
+  /identity_documents/{id}:
+    get:
+      tags:
+      - "identity_document"
+      summary: "Get a specific identity document"
+      description: "Gets an identity document that has been registered with Trusona with the given ID. Trusona does not store any of the personal information of the user, so the returned value is the hash of the scanned document, the type of document, and the verification status"
+      operationId: "getIdentityDocument"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "HMAC authorization using RP's SDK server credentials"
+        type: "string"
+        required: true
+      - in: "path"
+        name: "id"
+        description: "The ID of the identity document to get"
+        type: "string"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/IdentityDocument"
+        403:
+          description: "Forbidden - likely failed authentication"
+          schema:
+           $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Server Error"
+
+  /trusonafication_responses:
+    post:
+      tags:
+      - "trusonafication_response"
+      summary: "Respond to Trusonafications"
+      description: ""
+      operationId: "createTrusonaficationResponse"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "HMAC authorization using SDK client credentials"
+        type: "string"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "The response to the Trusonafication that was issued"
+        required: true
+        schema:
+          type: "object"
+          required:
+          - "payloads"
+          properties:
+            payloads:
+              type: "array"
+              items:
+                type: "string"
+              description: "A list of payload strings where the payload string format is `base64(payload_json).base64(sign(payload_json))`. Valid payload JSON formats are DeviceArPayload, UserPresencePayload, and AAMVALicensePayload"
+      responses:
+        201:
+          description: "Created"
+  /trusonafications:
+    post:
+      tags:
+      - "trusonafication"
+      summary: "Create a new trusonafication"
+      description: ""
+      operationId: "createTrusonafication"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "HMAC'd request string"
+        type: "string"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "The Trusonafication object that needs to be created"
+        required: true
+        schema:
+          type: "object"
+          required:
+          - "action"
+          - "resource"
+          - "desired_level"
+          properties:
+            email:
+              type: "string"
+              description: "The email for the user, previously registered"
+            trusona_id:
+              type: "string"
+              description: "The Trusona ID of the user"
+            device_identifier:
+              type: "string"
+              description: "The identifier of the device registered with Trusona"
+            user_identifier:
+              type: "string"
+              description: "The user identifier that was bound to at least one device in Trusona"
+            action:
+              type: "string"
+              description: "The Trusonafication action"
+            resource:
+              type: "string"
+              description: "The Trusonafication resource"
+            desired_level:
+              type: "integer"
+              description: "The desired level for the Trusonafication (1=EN, 2=ES, 3=EX)"
+              minimum: 1
+              maximum: 3
+            expires_at:
+              type: "string"
+              description: "The timestamp when the Trusonafication expires"
+              format: "date-time"
+            user_presence:
+              type: "boolean"
+              default: true
+              description: "Whether or not to verify the user's presence via OS level security (uses pin or biometrics or whatever the user has setup on their device)"
+            prompt:
+              type: "boolean"
+              default: true
+              description: "Whether or not to prompt the user with a dialog about what the RP wants them to do and requires the user to explicitly accept or reject the action"
+            show_identity_document:
+              type: "boolean"
+              default: false
+              description: "Whether or not to request the user to scan a registered identity document"
+      responses:
+        201:
+          description: "Created"
+          schema:
+            $ref: "#/definitions/Trusonafication"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden - likely failed authentication"
+          schema:
+           $ref: "#/definitions/Error"
+        422:
+          description: "Unprocessable Entity"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "Short description of error condition"
+              errors:
+                type: "array"
+                items:
+                  type: "string"
+        500:
+          description: "Server Error"
+  /trusonafications/{id}:
+    get:
+      tags:
+      - "trusonafication"
+      summary: "Get an existing trusonafication"
+      description: ""
+      operationId: "getTrusonafication"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "HMAC'd request string"
+        type: "string"
+        required: true
+      - in: "path"
+        name: "id"
+        type: "string"
+        description: "The record ID of the Trusonafication"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Trusonafication"
+        403:
+          description: "Forbidden - likely failed authentication"
+          schema:
+           $ref: "#/definitions/Error"
+        404:
+          description: "Not Found - the record does not exist"
+        500:
+          description: "Server Error"
+  /user_devices:
+    post:
+      tags:
+      - "user_device"
+      summary: "Create a Device+User Binding"
+      description: ""
+      operationId: "createUserDevice"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "HMAC'd request string"
+        type: "string"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "Device+User Binding object that needs to be added"
+        required: true
+        schema:
+          $ref: "#/definitions/UserDevice"
+      responses:
+        201:
+          description: "Created"
+          schema:
+            $ref: "#/definitions/UserDeviceResponse"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden - likely failed authentication"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        422:
+          description: "Unprocessable Entity"
+          schema:
+            $ref: "#/definitions/ErrorWithFields"
+        424:
+          description: "Failed Dependency"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Server Error"
+  /user_devices/{id}:
+    patch:
+      tags:
+      - "user_device"
+      summary: "Update a Device+User Binding"
+      description: ""
+      operationId: "updateUserDevice"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "HMAC'd request string"
+        type: "string"
+        required: true
+      - in: "path"
+        name: "id"
+        type: "string"
+        description: "The record ID of the UserDevice"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "fields to update for the UserDevice"
+        required: true
+        schema:
+          type: "object"
+          required:
+            - "active"
+          properties:
+            active:
+              type: "boolean"
+              description: "desired activation state for device"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/UserDeviceResponse"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden - likely failed authentication"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+        500:
+          description: "Server Error"
+  /users/{userIdentifier}:
+    delete:
+      summary: "Deletes a user"
+      description: "Deactivates all of the user's devices"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "HMAC authorization using RP's SDK server credentials"
+        type: "string"
+        required: true
+      - in: "path"
+        name: "userIdentifier"
+        description: "The userIdentifier known to the RP to be deleted"
+        type: "string"
+        required: true
+      responses:
+        204:
+          description: "The delete was successful"
+        403:
+          description: "RP's credentials were invalid"
+        404:
+          description: "The user was not found"
+        500:
+          description: "An internal error occurred"
+definitions:
+  UserDevice:
+    type: "object"
+    required:
+    - "device_identifier"
+    - "user_identifier"
+    properties:
+      device_identifier:
+        type: "string"
+      user_identifier:
+        type: "string"
+  UserDeviceResponse:
+    type: "object"
+    allOf:
+    - type: "object"
+      properties:
+        id:
+          type: "string"
+          description: "The id of the device+user binding that can be use to later activate it."
+        active:
+          type: "boolean"
+          description: "Indicates if the device+user binding is active."
+          default: false
+        activated_at:
+          type: "string"
+          description: "Timestamp when the device+user binding was activated"
+    - $ref: "#/definitions/UserDevice"
+  Device:
+    type: "object"
+    required:
+    - "device_public_key"
+    - "device_platform"
+    properties:
+      device_public_key:
+        $ref: "#/definitions/JsonWebKey"
+      auth_public_key:
+        $ref: "#/definitions/JsonWebKey"
+      device_platform:
+        type: "string"
+        enum: [android, ios]
+      bundle_id:
+        type: "string"
+    example:
+      device_public_key:
+        kty: "EC"
+        crv: "P-256"
+        x: "PblIozBGf7KApv5R4MJf5k_3FUvtzDMsMCGKkYDg_ac"
+        y: "GPaC-XQlMoFg3OoNtZAfuedJZ29ZUFf-eopqLCWGyjs"
+      auth_public_key:
+        kty: "EC"
+        crv: "P-256"
+        x: "SRZYipAH_y_-J4Y_3Gwv50ri7TvmgES7gFwN0kGBtPQ"
+        y: "QUBxJ0eNCVW5LsuR8trxrw4xuf4V0Nti1efEYe3bBSE"
+      device_platform: "android"
+      bundle_id: "com.trusona.TruBank"
+  DeviceResponse:
+    type: "object"
+    properties:
+      is_active:
+        type: "boolean"
+        description: "Whether or not the device has been activated"
+      activated_at:
+        type: "string"
+        description: "The timestamp when the device was activated"
+        format: "date-time"
+  IdentityDocument:
+    type: "object"
+    required:
+    - hash
+    properties:
+      id:
+        type: "string"
+      hash:
+        type: "string"
+      type:
+        type: "string"
+        enum: [AAMVA_DRIVERS_LICENSE]
+        default: AAMVA_DRIVERS_LICENSE
+      verification_status:
+        type: "string"
+        enum: [UNVERIFIED, UNVERIFIABLE, VERIFIED, FAILED]
+  AAMVADriversLicense:
+    type: "object"
+    allOf:
+      - $ref: "#/definitions/IdentityDocument"
+      - type: "object"
+        properties:
+          first_name:
+            type: "string"
+          last_name:
+            type: "string"
+          middle_name:
+            type: "string"
+          expiration_date:
+            type: "string"
+            format: "date"
+          issue_date:
+            type: "string"
+            format: "date"
+          date_of_birth:
+            type: "string"
+            format: "date"
+          gender:
+            type: "string"
+            enum:
+                - MALE
+                - FEMALE
+                - OTHER
+                - UNKNOWN
+          eye_color:
+            type: "string"
+            enum:
+                - BLACK
+                - BLUE
+                - BROWN
+                - GRAY
+                - GREEN
+                - HAZEL
+                - MAROON
+                - PINK
+                - DICHROMATIC
+                - UNKNOWN
+          height:
+            type: "number"
+            format: "double"
+          street_address:
+            type: "string"
+          city:
+            type: "string"
+          state:
+            type: "string"
+          postal_code:
+            type: "string"
+          customer_id:
+            type: "string"
+          document_id:
+            type: "string"
+          country:
+            type: "string"
+            enum:
+              - UNITED_STATES
+              - CANADA
+              - UNKNOWN
+          middle_name_truncation:
+            type: "string"
+            enum:
+              - TRUNCATED
+              - NONE
+              - UNKNOWN
+          first_name_truncation:
+            type: "string"
+            enum:
+              - TRUNCATED
+              - NONE
+              - UNKNOWN
+          last_name_truncation:
+            type: "string"
+            enum:
+              - TRUNCATED
+              - NONE
+              - UNKNOWN
+          street_address_supplement:
+            type: "string"
+          hair_color:
+            type: "string"
+            enum:
+              - BALD
+              - BLACK
+              - BLOND
+              - BROWN
+              - GREY
+              - RED
+              - SANDY
+              - WHITE
+              - UNKNOWN
+          place_of_birth:
+            type: "string"
+          audit_information:
+            type: "string"
+          inventory_control_number:
+            type: "string"
+          last_name_alias:
+            type: "string"
+          first_name_alias:
+            type: "string"
+          suffix_alias:
+            type: "string"
+          suffix:
+            type: "string"
+            enum:
+              - JUNIOR
+              - SENIOR
+              - FIRST
+              - SECOND
+              - THIRD
+              - FOURTH
+              - FIFTH
+              - SIXTH
+              - SEVENTH
+              - EIGHTH
+              - NINTH
+              - UNKNOWN
+  Trusonafication:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "The record ID for the Trusonafication"
+      status:
+        type: "string"
+        description: "The status of the Trusonafication"
+        enum: [INVALID, IN_PROGRESS, REJECTED, ACCEPTED, ACCEPTED_AT_LOWER_LEVEL, ACCEPTED_AT_HIGHER_LEVEL, EXPIRED]
+      user_identifier:
+        type: "string"
+        description: "The identifier of the user that has been issued a Trusonafication"
+      device_identifier:
+        type: "string"
+        description: "The device identifier that was used, if any, to determine the user identifier of the Trusonafication"
+      trusona_id:
+        type: "string"
+        description: "The public Trusona ID of the user being Trusonafied"
+      desired_level:
+        type: "integer"
+        description: "The desired level for the Trusonafication (1=EN, 2=ES, 3=EX)"
+        minimum: 1
+        maximum: 3
+      expires_at:
+        type: "string"
+        description: "The timestamp when the Trusonafication expires"
+        format: "date-time"
+      created_at:
+        type: "string"
+        description: "The timestamp when the Trusonafication was created"
+        format: "date-time"
+      updated_at:
+        type: "string"
+        description: "The timestamp when the Trusonafication last updated"
+        format: "date-time"
+      action:
+        type: "string"
+        description: "The Trusonafication action"
+      resource:
+        type: "string"
+        description: "The Trusonafication resource"
+      relying_party:
+        type: "string"
+        description: "The display name for the Relying Party"
+      result:
+        $ref: "#/definitions/TrusonaficationResult"
+      user_presence:
+        type: "boolean"
+        description: "Whether or not to verify the user's presence via OS level security (uses pin or biometrics or whatever the user has setup on their device)"
+      prompt:
+        type: "boolean"
+        description: "Whether or not to prompt the user with a dialog about what the RP wants them to do and requires the user to explicitly accept or reject the action"
+      show_identity_document:
+        type: "boolean"
+        description: "Whether or not to request the user to scan a registered identity document"
+  TrusonaficationResult:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "The record ID for the TrusonaficationResult"
+      is_accepted:
+        type: "boolean"
+        description: "Indiciates if the Trusonfication was accepted"
+      accepted_level:
+        type: "integer"
+        description: "The level for which the Trusonafication was accepted (1=EN, 2=ES, 3=EX)"
+      device_identifier:
+        type: "string"
+        description: "The identifier of the device that responded to the Trusonafication"
+      user_identifier:
+        type: "string"
+        description: "The user identifier bound to the device that responded to the Trusonafication"
+  Error:
+    type: "object"
+    required:
+    - "error"
+    - "message"
+    - "description"
+    properties:
+      error:
+        type: "string"
+      message:
+        type: "string"
+      description:
+        type: "string"
+    example:
+      error: "Error occurred"
+      message: "Could not perform requested action"
+      description: "The specific reason the action could not be performed"
+  ErrorWithFields:
+    allOf:
+    - $ref: "#/definitions/Error"
+    - type: "object"
+      properties:
+        field_errors:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      example:
+        error: "Resource not saved"
+        message: "Validation error"
+        description: "One or more field validation errors are present"
+        field_errors:
+          field_name1:
+          - "may not be blank"
+          field_name2:
+          - "may not be blank"
+          - "is not a valid email"
+  JsonWebKey:
+    type: "object"
+    description: "A JSON Web Key (JWK) as defined by https://tools.ietf.org/html/rfc7517"
+    required:
+    - "kty"
+    - "alg"
+    properties:
+      kty:
+        type: "string"
+      alg:
+        type: "string"
+    example:
+      kty: "RSA"
+      e: "AQAB"
+      n: "v7YNzZE1T0kfKklrmWPfslGdrD3ftqQZV0yPqhUHPkeH9Bww30S6mWzGFRQLaRppcJzy1InOoD-w7FgMSggoEvvW0daMoXFWPtiGSXrCDIih58kBU_Cu0SOtHMFxbNwoPgTuMqq-TB9xnhUh3ZwJhxdEEJaNhGyO6AP5Cn3BetGEMUA_tnMNnOP3BBc28qRVzzk0mgnI7icrZyacJ7LHaZZ1D6h9A5A8YxPoC3QUYu-vTXInPR5tCRiSt2HB8IOnk10xuLPengI7wxruLwmVA4BnC1cS5nDpVoIiWE9yO6LUn0fmhGpRWBLU36q1JMoLjegK34v-hsIxLq75KUJ0dw"
+      alg: "RS256"
+
+  TrusonaficationResponsePayload:
+    type: "object"
+    description: "The base information that all Trusonafication responds payloads share"
+    required:
+    - "type"
+    - "trusonafication_id"
+    properties:
+      type:
+        type: "string"
+        description: "The type of response payload this is"
+        enum: [device_ar, user_presence, aamva_drivers_license]
+      trusonafication_id:
+        type: "string"
+        description: "The ID of the Trusonafication this is in response to"
+  DeviceArPayload:
+    allOf:
+    - $ref: "#/definitions/TrusonaficationResponsePayload"
+    - type: "object"
+      description: "Anti-replay and device verification payload signed by the device key. The type field should be `device_ar`."
+      required:
+      - "type"
+      - "device_identifier"
+      - "nonce"
+      - "checksum"
+      properties:
+        type:
+          type: "string"
+          default: "device_ar"
+        device_identifier:
+          type: "string"
+          description: "The Trusona identifier for the device"
+        nonce:
+          type: "string"
+          description: "A nonce generated on the device prior to sending the payload"
+        checksum:
+          type: "string"
+          description: "A checksum of the nonce and device identifier formatted as `sha256Hex(nonce:device_identifier)`"
+        accelerometer:
+          type: "array"
+          items:
+            type: "number"
+          description: "A set of three numbers representing the acceleration of the device in three dimensional space"
+        gyro:
+          type: "array"
+          items:
+            type: "number"
+          description: "A set of three numbers representing the rotation of the device around it's three primary axes"
+  UserPresencePayload:
+    allOf:
+    - $ref: "#/definitions/TrusonaficationResponsePayload"
+    - type: "object"
+      description: "User presence payload signed by the auth key. The type field should be `user_presence`."
+      required:
+      - "type"
+      - "device_identifier"
+      properties:
+        type:
+          type: "string"
+          default: "user_presence"
+        device_identifier:
+          type: "string"
+          description: "The Trusona identifier for the device"
+  AAMVALicensePayload:
+    allOf:
+    - $ref: "#/definitions/TrusonaficationResponsePayload"
+    - type: "object"
+      description: "Driver's license payload signed by the device key. The type field should be `aamva_drivers_license`."
+      required:
+      - "type"
+      - "device_identifier"
+      - "hash"
+      - "nonce"
+      properties:
+        type:
+          type: "string"
+          default: "aamva_drivers_license"
+        device_identifier:
+          type: "string"
+          description: "The Trusona identifier for the device"
+        hash:
+          type: "string"
+          description: "The device generated hash of the scanned data from a user's driver's license"
+        nonce:
+          type: "string"
+          description: "Nonce generated at the time of the scan"
+        scan_x:
+          type: "number"
+          description: "X position of box within the camera viewport where the barcode was located"
+        scan_y:
+          type: "number"
+          description: "Y position of box within the camera viewport where the barcode was located"
+        scan_width:
+          type: "number"
+          description: "Width of box within the camera viewport where the barcode was located"
+        scan_height:
+          type: "number"
+          description: "Height of box within the camera viewport where the barcode was located"
+        scan_time:
+          type: "number"
+          description: "Time in seconds to scan the document"
