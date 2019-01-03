@@ -65,15 +65,31 @@
 // 1. Global
 // ---------
 
+
+@font-face {
+  font-family: "Sofia_Pro_Bold";
+  src: url("../fonts/sofia_pro_bold.otf") format("opentype")
+  }
+  
+  @font-face {
+    font-family: "Sofia_Pro_Extra_Light";
+    src: url("../fonts/sofia_pro_extra_light.otf") format("opentype")
+  }
+
+  @font-face {
+    font-family: "Sofia_Pro_Light";
+    src: url("../fonts/sofia_pro_light.otf") format("opentype")
+  }
+
 $global-font-size: 95%; // 100%
 $global-width: auto; // rem-calc(1200);
 $global-lineheight: 1.5;
 $foundation-palette: (
-  primary: #1779ba,
-  secondary: #767676,
-  success: #3adb76,
-  warning: #ffae00,
-  alert: #cc4b37,
+  primary: #7B46D1,
+  secondary: #888,
+  success: #50AA56,
+  warning: #F5D332,
+  alert: #D14646,
 );
 $light-gray: #e6e6e6;
 $medium-gray: #cacaca;
@@ -83,7 +99,7 @@ $black: #2d3134; //#0a0a0a;
 $white: #fefefe;
 $body-background: $white;
 $body-font-color: $black;
-$body-font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;
+$body-font-family: Sofia_Pro_Extra_Light, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;
 $body-antialiased: true;
 $global-margin: 1rem;
 $global-padding: 1rem;
@@ -130,7 +146,7 @@ $block-grid-max: 8;
 // 4. Base Typography
 // ------------------
 
-$header-font-family: $body-font-family;
+$header-font-family: Sofia_Pro_Bold;
 $header-font-weight: $global-weight-normal;
 $header-font-style: normal;
 $font-family-monospace: Consolas, 'Liberation Mono', Courier, monospace;
