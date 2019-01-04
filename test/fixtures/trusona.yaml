@@ -31,7 +31,7 @@ info:
   
     5. Convert the hex string to base64
     
-    `YjFjZDQ0NTQ4NTkzMjM0MGZkMmNkMDMxNzkxNzRhYzUyMDUzYjk2ZTkyNGM5NTczZGE2YWM2ODk4MTcxYzgyNw==`
+    `YjFjZDQ0NTQ4NTkzMjM0MGZkMmNkMDMxNzkxNzRhYzUyMDUz...`
   
     6. Add base 64 value and token as auth header 
     
