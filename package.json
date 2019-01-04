@@ -7,9 +7,9 @@
     "spectacle": "bin/spectacle.js"
   },
   "scripts": {
-    "build": "node bin/spectacle -l test/fixtures/cheese.png test/fixtures/cheese.yml",
-    "test": "mocha && node bin/spectacle -l test/fixtures/cheese.png test/fixtures/cheese.yml",
-    "develop": "node bin/spectacle -d",
+    "build": "node bin/spectacle -l test/fixtures/trusona.png test/fixtures/trusona.yaml",
+    "test": "mocha && node bin/spectacle -l test/fixtures/trusona.png test/fixtures/trusona.yaml",
+    "develop": "node bin/spectacle -d -l test/fixtures/trusona.png test/fixtures/trusona.yaml",
     "start": "spectacle -s"
   },
   "repository": {
