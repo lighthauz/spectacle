@@ -61,7 +61,7 @@ button:focus {
   padding-right: 1rem;
   padding-bottom: 2rem;
   border-right: 1px solid #eee;
-  background-color: #f6f6f6;
+  background-color: $pearl;
   height: 100vh;
   overflow: auto;
   position: fixed;
@@ -73,7 +73,7 @@ button:focus {
   h5 {
     margin: 1.5rem 0 0.65rem;
     text-transform: uppercase;
-    color: scale-color($medium-gray, $lightness: -10%);
+    color: scale-color($ferrite, $lightness: -10%);
     // color: $accent-color;
     font-size: 0.9rem;
   }
@@ -82,7 +82,7 @@ button:focus {
     display: block;
     // font-size: 0.95rem;
     margin: 0 0 0.25rem;
-    color: scale-color($black, $lightness: 15%);
+    color: scale-color($ferrite, $lightness: 15%);
     white-space: nowrap;
     overflow: hidden;
     -o-text-overflow: ellipsis;

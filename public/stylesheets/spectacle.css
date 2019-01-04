@@ -27,28 +27,28 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     content: "Path";
     display: block;
     margin-bottom: 0.5em;
-    color: #19064E;
+    color: #7B46D1;
     text-transform: uppercase;
     font-size: 0.9rem; }
   #spectacle .swagger-operation-description:before {
     content: "Description";
     display: block;
     margin-bottom: 0.5em;
-    color: #19064E;
+    color: #7B46D1;
     text-transform: uppercase;
     font-size: 0.9rem; }
   #spectacle .swagger-request-params:before {
     content: "Request parameters";
     display: block;
     margin-bottom: 0.5em;
-    color: #19064E;
+    color: #7B46D1;
     text-transform: uppercase;
     font-size: 0.9rem; }
   #spectacle .swagger-request-body:before {
     content: "Request body";
     display: block;
     margin-bottom: 0.5em;
-    color: #19064E;
+    color: #7B46D1;
     text-transform: uppercase;
     font-size: 0.9rem; }
   #spectacle .swagger-request-body .json-schema-properties:before {
@@ -57,7 +57,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     content: "Responses";
     display: block;
     margin-bottom: 0.5em;
-    color: #19064E;
+    color: #7B46D1;
     text-transform: uppercase;
     font-size: 0.9rem; }
   #spectacle .swagger-global:before {
@@ -134,7 +134,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     content: "Security";
     display: block;
     margin-bottom: 0.5em;
-    color: #19064E;
+    color: #7B46D1;
     text-transform: uppercase;
     font-size: 0.9rem; }
   #spectacle .swagger-security-definition-basic:before {
@@ -150,14 +150,14 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     content: "Description";
     display: block;
     margin-bottom: 0.5em;
-    color: #19064E;
+    color: #7B46D1;
     text-transform: uppercase;
     font-size: 0.9rem; }
   #spectacle .json-schema-properties:before {
     content: "Properties";
     display: block;
     margin-bottom: 0.5em;
-    color: #19064E;
+    color: #7B46D1;
     text-transform: uppercase;
     font-size: 0.9rem; }
   #spectacle .json-schema-properties dl {
@@ -182,21 +182,21 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     content: "Example";
     display: block;
     margin-bottom: 0.5em;
-    color: #19064E;
+    color: #7B46D1;
     text-transform: uppercase;
     font-size: 0.9rem; }
   #spectacle .json-schema-array-items:before {
     content: "Items";
     display: block;
     margin-bottom: 0.5em;
-    color: #19064E;
+    color: #7B46D1;
     text-transform: uppercase;
     font-size: 0.9rem; }
   #spectacle .json-schema-allOf-inherited:before {
     content: "Inherited";
     display: block;
     margin-bottom: 0.5em;
-    color: #19064E;
+    color: #7B46D1;
     text-transform: uppercase;
     font-size: 0.9rem; }
   #spectacle .json-schema-anyOf > dl {
@@ -209,7 +209,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     content: "Additional properties";
     display: block;
     margin-bottom: 0.5em;
-    color: #19064E;
+    color: #7B46D1;
     text-transform: uppercase;
     font-size: 0.9rem; }
   #spectacle .json-inner-schema .json-schema-properties,
@@ -1015,7 +1015,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     padding-right: 1rem;
     padding-bottom: 2rem;
     border-right: 1px solid #eee;
-    background-color: #f6f6f6;
+    background-color: #EEE;
     height: 100vh;
     overflow: auto;
     position: fixed;
@@ -1026,12 +1026,12 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     #spectacle #sidebar h5 {
       margin: 1.5rem 0 0.65rem;
       text-transform: uppercase;
-      color: #b6b6b6;
+      color: #3d3d3d;
       font-size: 0.9rem; }
     #spectacle #sidebar a {
       display: block;
       margin: 0 0 0.25rem;
-      color: #4a5055;
+      color: #606060;
       white-space: nowrap;
       overflow: hidden;
       -o-text-overflow: ellipsis;
@@ -1228,7 +1228,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
       font-size: 80%;
       color: #cacaca; }
       #spectacle article .powered-by span {
-        color: #19064E; }
+        color: #7B46D1; }
     #spectacle article .operation .operation-tags {
       position: absolute;
       top: 0;
