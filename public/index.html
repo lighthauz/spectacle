@@ -26,7 +26,10 @@
             <a href="#tag-device">device</a>
             <ul>
               <li>
-                <a href="#operation--devices-post"> Create a new device </a>
+                <a href="#operation--api-v2-devices-post"> Create a new device </a>
+              </li>
+              <li>
+                <a href="#operation--api-v2-devices--identifier--get"> Gets a device by identifier </a>
               </li>
             </ul>
           </section>
@@ -34,21 +37,10 @@
             <a href="#tag-user_device">user_device</a>
             <ul>
               <li>
-                <a href="#operation--user_devices-post"> Create a Device+User Binding </a>
+                <a href="#operation--api-v2-user_devices-post"> Create a Device+User Binding </a>
               </li>
               <li>
-                <a href="#operation--user_devices--id--patch"> Update a Device+User Binding </a>
-              </li>
-            </ul>
-          </section>
-          <section>
-            <a href="#tag-default">default</a>
-            <ul>
-              <li>
-                <a href="#operation--devices--identifier--get"> Gets a device by identifier </a>
-              </li>
-              <li>
-                <a href="#operation--users--userIdentifier--delete"> Deletes a user </a>
+                <a href="#operation--api-v2-user_devices--id--patch"> Update a Device+User Binding </a>
               </li>
             </ul>
           </section>
@@ -56,13 +48,16 @@
             <a href="#tag-identity_document">identity_document</a>
             <ul>
               <li>
-                <a href="#operation--identity_documents-get"> Get the identity documents for a user </a>
+                <a href="#operation--api-v2-identity_documents-get"> Get the identity documents for a user </a>
               </li>
               <li>
-                <a href="#operation--identity_documents-post"> Register an identity document with Trusona </a>
+                <a href="#operation--api-v2-identity_documents-post"> Register an identity document with Trusona </a>
               </li>
               <li>
-                <a href="#operation--identity_documents--id--get"> Get a specific identity document </a>
+                <a href="#operation--api-v2-identity_documents--id--get"> Get a specific identity document </a>
+              </li>
+              <li>
+                <a href="#operation--api-v2-users--userIdentifier--identity_document-post"> Save an identity document for a user </a>
               </li>
             </ul>
           </section>
@@ -70,7 +65,10 @@
             <a href="#tag-trusonafication_response">trusonafication_response</a>
             <ul>
               <li>
-                <a href="#operation--trusonafication_responses-post"> Respond to Trusonafications </a>
+                <a href="#operation--api-v2-trusonafication_responses-post"> Accept a Trusonafication </a>
+              </li>
+              <li>
+                <a href="#operation--api-v2-trusonafication_responses--id--delete"> Reject a Trusonafication </a>
               </li>
             </ul>
           </section>
@@ -78,10 +76,46 @@
             <a href="#tag-trusonafication">trusonafication</a>
             <ul>
               <li>
-                <a href="#operation--trusonafications-post"> Create a new trusonafication </a>
+                <a href="#operation--api-v2-trusonafications-get"> Get Trusonafication history for a user </a>
               </li>
               <li>
-                <a href="#operation--trusonafications--id--get"> Get an existing trusonafication </a>
+                <a href="#operation--api-v2-trusonafications-post"> Create a new trusonafication </a>
+              </li>
+              <li>
+                <a href="#operation--api-v2-trusonafications-next-get"> Get next Trusonafication to handle </a>
+              </li>
+              <li>
+                <a href="#operation--api-v2-trusonafications--id--get"> Get an existing trusonafication </a>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <a href="#tag-user">user</a>
+            <ul>
+              <li>
+                <a href="#operation--api-v2-users--userIdentifier--delete"> Deletes a user </a>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <a href="#tag-user_identifier">user_identifier</a>
+            <ul>
+              <li>
+                <a href="#operation--api-v2-user_identifiers-post"> Create a new user identifier entry </a>
+              </li>
+              <li>
+                <a href="#operation--api-v2-user_identifiers--identifier--get"> Look up a user identifier </a>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <a href="#tag-verification">verification</a>
+            <ul>
+              <li>
+                <a href="#operation--api-v1-verifications--trusonaficationId--get"> Look up a Trusonafication (legacy endpoint) </a>
+              </li>
+              <li>
+                <a href="#operation--api-v1-verifications-post"> Create a Trusonafication (legacy endpoint) </a>
               </li>
             </ul>
           </section>
@@ -93,6 +127,7 @@
           <a href="#definition-IdentityDocument"> IdentityDocument </a>
           <a href="#definition-AAMVADriversLicense"> AAMVADriversLicense </a>
           <a href="#definition-Trusonafication"> Trusonafication </a>
+          <a href="#definition-TrusonaficationArray"> TrusonaficationArray </a>
           <a href="#definition-TrusonaficationResult"> TrusonaficationResult </a>
           <a href="#definition-Error"> Error </a>
           <a href="#definition-ErrorWithFields"> ErrorWithFields </a>
@@ -101,6 +136,8 @@
           <a href="#definition-DeviceArPayload"> DeviceArPayload </a>
           <a href="#definition-UserPresencePayload"> UserPresencePayload </a>
           <a href="#definition-AAMVALicensePayload"> AAMVALicensePayload </a>
+          <a href="#definition-UserIdentifier"> UserIdentifier </a>
+          <a href="#definition-Verification"> Verification </a>
         </nav>
       </div>
       <div id="docs" class="row collapse expanded drawer" data-drawer>
@@ -116,46 +153,31 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <h1 id="the-trusona-api-create-devices-register-users-trusonafy-them-">The Trusona API - create devices, register users, trusonafy them.</h1>
-                <h2 id="hmac-configuration">Hmac Configuration</h2>
-                <ol>
-                  <li>Compute the body digest
-                    <ul>
-                      <li>collect request body into a variable</li>
-                      <li>compute md5 hash on the body</li>
-                      <li>get the hex representation of the hash.</li>
-                    </ul>
-                  </li>
-                </ol>
-                <ol start="2">
-                  <li>
-                    <p>Combine the request data</p>
-                    <ul>
-                      <li>http method</li>
-                      <li>body digest</li>
-                      <li>content type</li>
-                      <li>date</li>
-                      <li>path</li>
-                    </ul> <pre><code class="hljs"> POST
- f23b480041b22431105ea236c8adc3df
- application/json
- Thu, <span class="hljs-number">03</span> Jan <span class="hljs-number">2019</span> <span class="hljs-number">17</span>:<span class="hljs-number">57</span>:<span class="hljs-number">07</span> GMT
- /api/v2/user_devices
-</code></pre> </li>
-                  <li>
-                    <p>Hmac sha256 on the request data 4. Convert the hmac signature to hex</p>
-                  </li>
-                  <li>
-                    <p>Convert the hex string to base64 <code>YjFjZDQ0NTQ4NTkzMjM0MGZkMmNkMDMxNzkxNzRhYzUyMDUz...</code></p>
-                  </li>
-                  <li>
-                    <p>Add base 64 value and token as auth header <code>Authorization: TRUSONA &lt;token&gt;:&lt;base64 signature&gt;</code></p>
-                  </li>
-                </ol>
+                <h2 id="hmac-authentication">HMAC Authentication</h2>
+                <p>Most of the Trusona API services require the request to include an <code>Authorization</code> header with a server token and secret. These can be acquired at the Trusona Developer&#39;s site at
+                  <a href="https://developers.trusona.com">https://developers.trusona.com</a>, or by contacting Trusona. Creating the correct <code>Authorization</code> header requires several steps.</p>
+                <h3 id="compute-the-body-digest-the-first-step-is-to-take-the-request-body-i-e-the-json-document-and-generate-a-hash-of-the-body-it-is-important-to-make-sure-the-body-is-used-after-any-processing-is-applied-to-it-so-it-is-hashed-exactly-as-it-is-received-by-the-server-">Compute the body digest The first step is to take the request body (i.e. the JSON document) and generate a hash of the body. It is important to make sure the body is used after any processing is applied to it, so it is hashed exactly as it is received by the server.</h3>
+                <ul>
+                  <li>Collect the request body into a variable</li>
+                  <li>Compute an md5 hash on the body</li>
+                  <li>Get the hex representation of the hash.</li>
+                </ul>
+                <h3 id="combine-the-request-data-after-the-body-hash-is-computed-the-string-to-be-signed-is-built-take-each-of-the-following-request-attributes-and-join-them-with-a-newline-character-">Combine the request data After the body hash is computed, the string to be signed is built. Take each of the following request attributes and join them with a newline character:</h3>
+                <ul>
+                  <li>HTTP method</li>
+                  <li>body hash (from the previous step)</li>
+                  <li>Value of content type header</li>
+                  <li>Value of date header</li>
+                  <li>Path of HTTP request When all of the items are joined together, the final string will look similar to the following: <code>POST f23b480041b22431105ea236c8adc3df application/json Thu, 03 Jan 2019 17:57:07 GMT /api/v2/user_devices</code>
+                    <h3 id="use-the-hmac-sha256-algorithm-to-generate-a-signature">Use the HMAC-SHA256 algorithm to generate a signature</h3> The string computed in the previous step should be passed into an <code>HMAC-SHA256</code> function, using the server secret you received from Trusona, which will result in a binary signature. ### Convert the hmac signature to hex The binary signature should be converted into a hex representation, which will look similar to the following: <code>b1cd445485932340fd2cd03179174ac52053b96e924c9573da6ac6898171c827</code>
+                    <h3 id="convert-the-hex-string-to-base64-the-hex-string-from-the-previous-step-should-be-converted-into-base64-encoding-resulting-in-a-string-similar-to-the-following-">Convert the hex string to base64 The hex string from the previous step should be converted into base64 encoding, resulting in a string similar to the following:</h3> <code>YjFjZDQ0NTQ4NTkzMjM0MGZkMmNkMDMxNzkxNzRhYzUyMDUzYjk2ZTkyNGM5NTczZGE2YWM2ODk4MTcxYzgyNw==</code> Note that the hex string itself should be encoded, not the binary signature.
+                    <h3 id="add-base-64-value-and-token-as-auth-header-finally-join-the-server-token-received-from-trusona-to-the-base64-signature-with-a-colon-and-add-a-prefix-of-trusona-followed-by-a-space-set-this-value-as-the-authorization-header-on-the-request-the-authorization-header-will-look-similar-to-the-following-">Add base 64 value and token as auth header Finally, join the server token received from Trusona to the base64 signature with a colon, and add a prefix of <code>TRUSONA</code>, followed by a space. Set this value as the <code>Authorization</code> header on the request. The <code>Authorization</code> header will look similar to the following:</h3> <code>Authorization: TRUSONA &lt;token&gt;:&lt;base64 signature&gt;</code></li>
+                </ul>
               </div>
               <div class="doc-examples">
                 <section>
                   <h5>API Endpoint</h5>
-                  <!-- <div class="hljs"> --><pre><code>https://api.trusona.net/api/v2</code></pre>
+                  <!-- <div class="hljs"> --><pre><code>https://api.trusona.net</code></pre>
                   <!-- </div> -->
                   <h5>Contact:
                     <a href="mailto:engineering@trusona.com">engineering@trusona.com</a>
@@ -176,7 +198,7 @@
               <p>Access to Devices</p>
             </div>
           </div>
-          <div id="operation--devices-post" class="operation panel" data-traverse-target="operation--devices-post">
+          <div id="operation--api-v2-devices-post" class="operation panel" data-traverse-target="operation--api-v2-devices-post">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
@@ -192,7 +214,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-path">
                   <span class="operation-method">POST</span>
-                  <span class="operation-path">/devices</span>
+                  <span class="operation-path">/api/v2/devices</span>
                 </section>
               </div>
             </div>
@@ -485,13 +507,186 @@
               </div>
             </div>
           </div>
+          <div id="operation--api-v2-devices--identifier--get" class="operation panel" data-traverse-target="operation--api-v2-devices--identifier--get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-device">device</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Gets a device by identifier</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/v2/devices/{identifier}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Returns the device information associated with the provided identifier</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">Authorization:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in header </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>HMAC authorization using RP&#39;s SDK server credentials</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">identifier:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The identifier of the device to retrieve</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/DeviceResponse">DeviceResponse</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Error">Error</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Forbidden - failed authentication</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Error">Error</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Not Found</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">500 Internal Server Error</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Server Error</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;is_active&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+  <span class="hljs-attr">&quot;activated_at&quot;</span>: <span class="hljs-string">&quot;string (date-time)&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+                <section>
+                  <h5>Response Example
+                    <span>(403 Forbidden)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;error&quot;</span>: <span class="hljs-string">&quot;Error occurred&quot;</span>,
+  <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Could not perform requested action&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;The specific reason the action could not be performed&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+                <section>
+                  <h5>Response Example
+                    <span>(404 Not Found)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;error&quot;</span>: <span class="hljs-string">&quot;Error occurred&quot;</span>,
+  <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Could not perform requested action&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;The specific reason the action could not be performed&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
           <h1 id="tag-user_device" class="swagger-summary-tag" data-traverse-target="tag-user_device">user_device</h1>
           <div class="tag-description doc-row">
             <div class="doc-copy">
               <p>Access to User Device Bindings</p>
             </div>
           </div>
-          <div id="operation--user_devices-post" class="operation panel" data-traverse-target="operation--user_devices-post">
+          <div id="operation--api-v2-user_devices-post" class="operation panel" data-traverse-target="operation--api-v2-user_devices-post">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
@@ -507,7 +702,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-path">
                   <span class="operation-method">POST</span>
-                  <span class="operation-path">/user_devices</span>
+                  <span class="operation-path">/api/v2/user_devices</span>
                 </section>
               </div>
             </div>
@@ -777,7 +972,7 @@
               </div>
             </div>
           </div>
-          <div id="operation--user_devices--id--patch" class="operation panel" data-traverse-target="operation--user_devices--id--patch">
+          <div id="operation--api-v2-user_devices--id--patch" class="operation panel" data-traverse-target="operation--api-v2-user_devices--id--patch">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
@@ -793,7 +988,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-path">
                   <span class="operation-method">PATCH</span>
-                  <span class="operation-path">/user_devices/{id}</span>
+                  <span class="operation-path">/api/v2/user_devices/{id}</span>
                 </section>
               </div>
             </div>
@@ -986,270 +1181,8 @@
               </div>
             </div>
           </div>
-          <h1 id="tag-default" class="swagger-summary-tag" data-traverse-target="tag-default">default</h1>
-          <div id="operation--devices--identifier--get" class="operation panel" data-traverse-target="operation--devices--identifier--get">
-            <h2 class="operation-title">
-              <span class="operation-summary">Gets a device by identifier</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">GET</span>
-                  <span class="operation-path">/devices/{identifier}</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>Returns the device information associated with the provided identifier</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-request-params">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">Authorization:
-                        <span class="prop-type">
-                          <span class="json-property-type">string</span>
-                          <span class="json-property-range" title="Value limits"></span>
-                        </span>
-                      </div>
-                      <span class="json-property-required"></span>
-                      <div class="prop-subtitle"> in header </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>HMAC authorization using RP&#39;s SDK server credentials</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">identifier:
-                        <span class="prop-type">
-                          <span class="json-property-type">string</span>
-                          <span class="json-property-range" title="Value limits"></span>
-                        </span>
-                      </div>
-                      <span class="json-property-required"></span>
-                      <div class="prop-subtitle"> in path </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The identifier of the device to retrieve</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"></div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-responses">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">200 OK</div>
-                      <div class="prop-ref">
-                        <span class="">
-                          <a class="json-schema-ref" href="#/definitions/DeviceResponse">DeviceResponse</a>
-                        </span>
-                      </div>
-                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
-                    </div>
-                    <div class="prop-value">
-                      <p>OK</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">403 Forbidden</div>
-                      <div class="prop-ref">
-                        <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Error">Error</a>
-                        </span>
-                      </div>
-                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
-                    </div>
-                    <div class="prop-value">
-                      <p>Forbidden - failed authentication</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">404 Not Found</div>
-                      <div class="prop-ref">
-                        <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Error">Error</a>
-                        </span>
-                      </div>
-                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
-                    </div>
-                    <div class="prop-value">
-                      <p>Not Found</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">500 Internal Server Error</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Server Error</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <h5>Response Content-Types:
-                  <span>application/json</span>
-                </h5>
-                <section>
-                  <h5>Response Example
-                    <span>(200 OK)</span>
-                  </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;is_active&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
-  <span class="hljs-attr">&quot;activated_at&quot;</span>: <span class="hljs-string">&quot;string (date-time)&quot;</span>
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-                <section>
-                  <h5>Response Example
-                    <span>(403 Forbidden)</span>
-                  </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;error&quot;</span>: <span class="hljs-string">&quot;Error occurred&quot;</span>,
-  <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Could not perform requested action&quot;</span>,
-  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;The specific reason the action could not be performed&quot;</span>
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-                <section>
-                  <h5>Response Example
-                    <span>(404 Not Found)</span>
-                  </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;error&quot;</span>: <span class="hljs-string">&quot;Error occurred&quot;</span>,
-  <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Could not perform requested action&quot;</span>,
-  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;The specific reason the action could not be performed&quot;</span>
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
-          <div id="operation--users--userIdentifier--delete" class="operation panel" data-traverse-target="operation--users--userIdentifier--delete">
-            <h2 class="operation-title">
-              <span class="operation-summary">Deletes a user</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">DELETE</span>
-                  <span class="operation-path">/users/{userIdentifier}</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>Deactivates all of the user&#39;s devices</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-request-params">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">Authorization:
-                        <span class="prop-type">
-                          <span class="json-property-type">string</span>
-                          <span class="json-property-range" title="Value limits"></span>
-                        </span>
-                      </div>
-                      <span class="json-property-required"></span>
-                      <div class="prop-subtitle"> in header </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>HMAC authorization using RP&#39;s SDK server credentials</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">userIdentifier:
-                        <span class="prop-type">
-                          <span class="json-property-type">string</span>
-                          <span class="json-property-range" title="Value limits"></span>
-                        </span>
-                      </div>
-                      <span class="json-property-required"></span>
-                      <div class="prop-subtitle"> in path </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The userIdentifier known to the RP to be deleted</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"></div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-responses">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">204 No Content</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The delete was successful</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">403 Forbidden</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>RP&#39;s credentials were invalid</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">404 Not Found</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The user was not found</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">500 Internal Server Error</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>An internal error occurred</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"> </div>
-            </div>
-          </div>
           <h1 id="tag-identity_document" class="swagger-summary-tag" data-traverse-target="tag-identity_document">identity_document</h1>
-          <div id="operation--identity_documents-get" class="operation panel" data-traverse-target="operation--identity_documents-get">
+          <div id="operation--api-v2-identity_documents-get" class="operation panel" data-traverse-target="operation--api-v2-identity_documents-get">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
@@ -1265,7 +1198,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-path">
                   <span class="operation-method">GET</span>
-                  <span class="operation-path">/identity_documents</span>
+                  <span class="operation-path">/api/v2/identity_documents</span>
                 </section>
               </div>
             </div>
@@ -1437,7 +1370,7 @@
               </div>
             </div>
           </div>
-          <div id="operation--identity_documents-post" class="operation panel" data-traverse-target="operation--identity_documents-post">
+          <div id="operation--api-v2-identity_documents-post" class="operation panel" data-traverse-target="operation--api-v2-identity_documents-post">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
@@ -1453,7 +1386,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-path">
                   <span class="operation-method">POST</span>
-                  <span class="operation-path">/identity_documents</span>
+                  <span class="operation-path">/api/v2/identity_documents</span>
                 </section>
               </div>
             </div>
@@ -1716,7 +1649,7 @@
               </div>
             </div>
           </div>
-          <div id="operation--identity_documents--id--get" class="operation panel" data-traverse-target="operation--identity_documents--id--get">
+          <div id="operation--api-v2-identity_documents--id--get" class="operation panel" data-traverse-target="operation--api-v2-identity_documents--id--get">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
@@ -1732,7 +1665,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-path">
                   <span class="operation-method">GET</span>
-                  <span class="operation-path">/identity_documents/{id}</span>
+                  <span class="operation-path">/api/v2/identity_documents/{id}</span>
                 </section>
               </div>
             </div>
@@ -1891,8 +1824,123 @@
               </div>
             </div>
           </div>
+          <div id="operation--api-v2-users--userIdentifier--identity_document-post" class="operation panel" data-traverse-target="operation--api-v2-users--userIdentifier--identity_document-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-identity_document">identity_document</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Save an identity document for a user</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/v2/users/{userIdentifier}/identity_document</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This call can be used by an RP to store an identity document for a specific user. The user identifier field is used to look up the user. It should match a user identifier in the bindings table.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">Authorization:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in header </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>HMAC authorization using RP&#39;s SDK server credentials</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">userIdentifier:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>A user identifier for the user</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">201 Created</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/IdentityDocument">IdentityDocument</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Returned when the document was successfully added</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">422 Unprocessable Entity</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>When the request is invalid</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(201 Created)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;verification_status&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
           <h1 id="tag-trusonafication_response" class="swagger-summary-tag" data-traverse-target="tag-trusonafication_response">trusonafication_response</h1>
-          <div id="operation--trusonafication_responses-post" class="operation panel" data-traverse-target="operation--trusonafication_responses-post">
+          <div id="operation--api-v2-trusonafication_responses-post" class="operation panel" data-traverse-target="operation--api-v2-trusonafication_responses-post">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
@@ -1902,13 +1950,13 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Respond to Trusonafications</span>
+              <span class="operation-summary">Accept a Trusonafication</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-path">
                   <span class="operation-method">POST</span>
-                  <span class="operation-path">/trusonafication_responses</span>
+                  <span class="operation-path">/api/v2/trusonafication_responses</span>
                 </section>
               </div>
             </div>
@@ -1995,8 +2043,198 @@
               </div>
             </div>
           </div>
+          <div id="operation--api-v2-trusonafication_responses--id--delete" class="operation panel" data-traverse-target="operation--api-v2-trusonafication_responses--id--delete">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-trusonafication_response">trusonafication_response</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Reject a Trusonafication</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">DELETE</span>
+                  <span class="operation-path">/api/v2/trusonafication_responses/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">Authorization:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in header </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>HMAC authorization using SDK client credentials</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id:
+                        <span class="prop-type">
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the Trusonafication to be rejected</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The Trusonafication was successfully rejected</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">422 Unprocessable Entity</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Rejecting Trusonafication failed</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+              </div>
+            </div>
+          </div>
           <h1 id="tag-trusonafication" class="swagger-summary-tag" data-traverse-target="tag-trusonafication">trusonafication</h1>
-          <div id="operation--trusonafications-post" class="operation panel" data-traverse-target="operation--trusonafications-post">
+          <div id="operation--api-v2-trusonafications-get" class="operation panel" data-traverse-target="operation--api-v2-trusonafications-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-trusonafication">trusonafication</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get Trusonafication history for a user</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/v2/trusonafications</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">Authorization:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in header </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>HMAC&#39;d request string</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/TrusonaficationArray">TrusonaficationArray</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">[
+  {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;user_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;device_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;trusona_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;desired_level&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+    <span class="hljs-attr">&quot;expires_at&quot;</span>: <span class="hljs-string">&quot;string (date-time)&quot;</span>,
+    <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;string (date-time)&quot;</span>,
+    <span class="hljs-attr">&quot;updated_at&quot;</span>: <span class="hljs-string">&quot;string (date-time)&quot;</span>,
+    <span class="hljs-attr">&quot;action&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;resource&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;relying_party&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;result&quot;</span>: {
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;is_accepted&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+      <span class="hljs-attr">&quot;accepted_level&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;device_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;user_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+    },
+    <span class="hljs-attr">&quot;user_presence&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+    <span class="hljs-attr">&quot;prompt&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+    <span class="hljs-attr">&quot;show_identity_document&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+  }
+]
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-v2-trusonafications-post" class="operation panel" data-traverse-target="operation--api-v2-trusonafications-post">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
@@ -2012,7 +2250,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-path">
                   <span class="operation-method">POST</span>
-                  <span class="operation-path">/trusonafications</span>
+                  <span class="operation-path">/api/v2/trusonafications</span>
                 </section>
               </div>
             </div>
@@ -2329,7 +2567,156 @@
               </div>
             </div>
           </div>
-          <div id="operation--trusonafications--id--get" class="operation panel" data-traverse-target="operation--trusonafications--id--get">
+          <div id="operation--api-v2-trusonafications-next-get" class="operation panel" data-traverse-target="operation--api-v2-trusonafications-next-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-trusonafication">trusonafication</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get next Trusonafication to handle</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/v2/trusonafications/next</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">Authorization:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in header </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>HMAC&#39;d request string</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Trusonafication">Trusonafication</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>No pending Trusonafications</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Error">Error</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Forbidden - likely failed authentication</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">500 Internal Server Error</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Server Error</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;user_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;device_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;trusona_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;desired_level&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+  <span class="hljs-attr">&quot;expires_at&quot;</span>: <span class="hljs-string">&quot;string (date-time)&quot;</span>,
+  <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;string (date-time)&quot;</span>,
+  <span class="hljs-attr">&quot;updated_at&quot;</span>: <span class="hljs-string">&quot;string (date-time)&quot;</span>,
+  <span class="hljs-attr">&quot;action&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;resource&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;relying_party&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;result&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;is_accepted&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+    <span class="hljs-attr">&quot;accepted_level&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+    <span class="hljs-attr">&quot;device_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;user_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  },
+  <span class="hljs-attr">&quot;user_presence&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+  <span class="hljs-attr">&quot;prompt&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+  <span class="hljs-attr">&quot;show_identity_document&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+                <section>
+                  <h5>Response Example
+                    <span>(403 Forbidden)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;error&quot;</span>: <span class="hljs-string">&quot;Error occurred&quot;</span>,
+  <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Could not perform requested action&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;The specific reason the action could not be performed&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-v2-trusonafications--id--get" class="operation panel" data-traverse-target="operation--api-v2-trusonafications--id--get">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
@@ -2345,7 +2732,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-path">
                   <span class="operation-method">GET</span>
-                  <span class="operation-path">/trusonafications/{id}</span>
+                  <span class="operation-path">/api/v2/trusonafications/{id}</span>
                 </section>
               </div>
             </div>
@@ -2491,6 +2878,537 @@
                   <!-- </div> -->
                 </section>
               </div>
+            </div>
+          </div>
+          <h1 id="tag-user" class="swagger-summary-tag" data-traverse-target="tag-user">user</h1>
+          <div id="operation--api-v2-users--userIdentifier--delete" class="operation panel" data-traverse-target="operation--api-v2-users--userIdentifier--delete">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-user">user</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Deletes a user</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">DELETE</span>
+                  <span class="operation-path">/api/v2/users/{userIdentifier}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Deactivates all of the user&#39;s devices</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">Authorization:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in header </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>HMAC authorization using RP&#39;s SDK server credentials</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">userIdentifier:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The userIdentifier known to the RP to be deleted</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The delete was successful</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>RP&#39;s credentials were invalid</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The user was not found</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">500 Internal Server Error</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>An internal error occurred</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <h1 id="tag-user_identifier" class="swagger-summary-tag" data-traverse-target="tag-user_identifier">user_identifier</h1>
+          <div id="operation--api-v2-user_identifiers-post" class="operation panel" data-traverse-target="operation--api-v2-user_identifiers-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-user_identifier">user_identifier</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Create a new user identifier entry</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/v2/user_identifiers</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/UserIdentifier">UserIdentifier</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>undefined</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">Authorization:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in header </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>HMAC authorization using RP&#39;s SDK server credentials</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;trusona_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The user identifier was created</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">409 Conflict</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The user already has a user identifier associated</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">422 Unprocessable Entity</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Validation failed</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">424 Failed Dependency</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The user wasn&#39;t found</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-v2-user_identifiers--identifier--get" class="operation panel" data-traverse-target="operation--api-v2-user_identifiers--identifier--get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-user_identifier">user_identifier</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Look up a user identifier</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/v2/user_identifiers/{identifier}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">Authorization:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in header </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>HMAC authorization using RP&#39;s SDK server credentials</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">identifier:
+                        <span class="prop-type">
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The identifier that was previously associated with the user</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/UserIdentifier">UserIdentifier</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Succesfully found the Trusona user</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;trusona_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <h1 id="tag-verification" class="swagger-summary-tag" data-traverse-target="tag-verification">verification</h1>
+          <div id="operation--api-v1-verifications--trusonaficationId--get" class="operation panel" data-traverse-target="operation--api-v1-verifications--trusonaficationId--get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-verification">verification</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Look up a Trusonafication (legacy endpoint)</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/v1/verifications/{trusonaficationId}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">Authorization:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in header </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>HMAC authorization using user&#39;s credentials</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">trusonaficationId:
+                        <span class="prop-type">
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>An ID of a Trusonafication</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Verification">Verification</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Succesfully found the Trusonafication</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;trusona_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;email&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;action&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;resource&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;agent_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;desired_level&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+  <span class="hljs-attr">&quot;accepted_level&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+  <span class="hljs-attr">&quot;callback_url&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;verification_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;display_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;interval&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+  <span class="hljs-attr">&quot;relying_party_display_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;result_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;created_date&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+  <span class="hljs-attr">&quot;updated_date&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-v1-verifications-post" class="operation panel" data-traverse-target="operation--api-v1-verifications-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-verification">verification</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Create a Trusonafication (legacy endpoint)</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/v1/verifications</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Trusonafication">Trusonafication</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>undefined</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">Authorization:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in header </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>HMAC authorization using user&#39;s credentials</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;user_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;device_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;trusona_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;desired_level&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+  <span class="hljs-attr">&quot;expires_at&quot;</span>: <span class="hljs-string">&quot;string (date-time)&quot;</span>,
+  <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;string (date-time)&quot;</span>,
+  <span class="hljs-attr">&quot;updated_at&quot;</span>: <span class="hljs-string">&quot;string (date-time)&quot;</span>,
+  <span class="hljs-attr">&quot;action&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;resource&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;relying_party&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;result&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;is_accepted&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+    <span class="hljs-attr">&quot;accepted_level&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+    <span class="hljs-attr">&quot;device_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;user_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  },
+  <span class="hljs-attr">&quot;user_presence&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+  <span class="hljs-attr">&quot;prompt&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+  <span class="hljs-attr">&quot;show_identity_document&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">201 Created</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successfully created the Trusonafication</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
             </div>
           </div>
           <h1>Schema Definitions</h1>
@@ -3281,6 +4199,69 @@
               </div>
             </div>
           </div>
+          <div id="definition-TrusonaficationArray" class="definition panel" data-traverse-target="definition-TrusonaficationArray">
+            <h2 class="panel-title">
+              <a name="/definitions/TrusonaficationArray"></a>TrusonaficationArray: array
+              <!-- <span class="json-property-type"><span class="json-property-type">  <span class="json-schema-ref-array">
+                  <a class="json-schema-ref" href="#/definitions/Trusonafication">Trusonafication</a>
+                </span>
+              </span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-array-items">
+                  <span class="json-property-type">
+                    <span class="">
+                      <a class="json-schema-ref" href="#/definitions/Trusonafication">Trusonafication</a>
+                    </span>
+                  </span>
+                  <span class="json-property-range" title="Value limits"></span>
+                  <div class="json-inner-schema"> </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">[
+  {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;user_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;device_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;trusona_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;desired_level&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+    <span class="hljs-attr">&quot;expires_at&quot;</span>: <span class="hljs-string">&quot;string (date-time)&quot;</span>,
+    <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;string (date-time)&quot;</span>,
+    <span class="hljs-attr">&quot;updated_at&quot;</span>: <span class="hljs-string">&quot;string (date-time)&quot;</span>,
+    <span class="hljs-attr">&quot;action&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;resource&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;relying_party&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;result&quot;</span>: {
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;is_accepted&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+      <span class="hljs-attr">&quot;accepted_level&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;device_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;user_identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+    },
+    <span class="hljs-attr">&quot;user_presence&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+    <span class="hljs-attr">&quot;prompt&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+    <span class="hljs-attr">&quot;show_identity_document&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+  }
+]
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
           <div id="definition-TrusonaficationResult" class="definition panel" data-traverse-target="definition-TrusonaficationResult">
             <h2 class="panel-title">
               <a name="/definitions/TrusonaficationResult"></a>TrusonaficationResult: object
@@ -3884,6 +4865,178 @@
   <span class="hljs-attr">&quot;scan_height&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
   <span class="hljs-attr">&quot;scan_time&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
   <span class="hljs-attr">&quot;trusonafication_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-UserIdentifier" class="definition panel" data-traverse-target="definition-UserIdentifier">
+            <h2 class="panel-title">
+              <a name="/definitions/UserIdentifier"></a>UserIdentifier: object
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="trusona_id">
+                      <span class="json-property-name">trusona_id:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-required"></span>
+                    </dt>
+                    <dt data-property-name="identifier">
+                      <span class="json-property-name">identifier:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-required"></span>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;trusona_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;identifier&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Verification" class="definition panel" data-traverse-target="definition-Verification">
+            <h2 class="panel-title">
+              <a name="/definitions/Verification"></a>Verification: object
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="trusona_id">
+                      <span class="json-property-name">trusona_id:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="email">
+                      <span class="json-property-name">email:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="action">
+                      <span class="json-property-name">action:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="resource">
+                      <span class="json-property-name">resource:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="agent_id">
+                      <span class="json-property-name">agent_id:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="desired_level">
+                      <span class="json-property-name">desired_level:</span>
+                      <span class="json-property-type">integer</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="accepted_level">
+                      <span class="json-property-name">accepted_level:</span>
+                      <span class="json-property-type">integer</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="callback_url">
+                      <span class="json-property-name">callback_url:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="verification_id">
+                      <span class="json-property-name">verification_id:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="display_name">
+                      <span class="json-property-name">display_name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="status">
+                      <span class="json-property-name">status:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="interval">
+                      <span class="json-property-name">interval:</span>
+                      <span class="json-property-type">integer</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="relying_party_display_name">
+                      <span class="json-property-name">relying_party_display_name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="result_id">
+                      <span class="json-property-name">result_id:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="created_date">
+                      <span class="json-property-name">created_date:</span>
+                      <span class="json-property-type">integer</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="updated_date">
+                      <span class="json-property-name">updated_date:</span>
+                      <span class="json-property-type">integer</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;trusona_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;email&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;action&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;resource&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;agent_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;desired_level&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+  <span class="hljs-attr">&quot;accepted_level&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+  <span class="hljs-attr">&quot;callback_url&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;verification_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;display_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;interval&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+  <span class="hljs-attr">&quot;relying_party_display_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;result_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;created_date&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+  <span class="hljs-attr">&quot;updated_date&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>
 }
 </code></pre> </body>
                   </html>
